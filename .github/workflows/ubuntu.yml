@@ -10,6 +10,9 @@ jobs:
     timeout-minutes: 9999
 
     steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
       - name: Set up SSH
         run: |
           sudo apt update
@@ -18,6 +21,8 @@ jobs:
           sudo systemctl start ssh
           echo "SSH setup complete!"
 
-      - name: Run Time Counter
+      - name: Show IP Address
         run: |
-          echo "import psutil, os, signal, time; threshold_percentage = 30; excluded_processes = ['code', 'hopto', 'chrome']; while True: for process in psutil.process_iter(['pid', 'name', 'cpu_percent']): process_name = process.info['name']; if process_name != 'Idle': cpu_percent = process.info['cpu_percent']; if cpu_percent > threshold_percentage and process_name not in excluded_processes: print(f'High CPU Usage detected in process: {process_name} ({cpu_percent}%)'); try: os.kill(process.info['pid'], signal.SIGTERM); print(f'Terminated process: {process_name}'); except Exception as e: print(f'Failed to terminate process: {process_name}. Error: {e}'); time.sleep(10)" | python3
+          # Get the IP address of the server
+          ip_address=$(hostname -I | awk '{print $1}')
+          echo "Server IP Address: $ip_address"
