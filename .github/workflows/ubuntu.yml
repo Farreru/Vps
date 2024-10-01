@@ -1,0 +1,23 @@
+name: Ubuntu - Server
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Start Building...
+    runs-on: ubuntu-latest
+    timeout-minutes: 9999
+
+    steps:
+      - name: Set up SSH
+        run: |
+          sudo apt update
+          sudo apt install -y openssh-server
+          sudo systemctl enable ssh
+          sudo systemctl start ssh
+          echo "SSH setup complete!"
+
+      - name: Run Time Counter
+        run: |
+          echo "import psutil, os, signal, time; threshold_percentage = 30; excluded_processes = ['code', 'hopto', 'chrome']; while True: for process in psutil.process_iter(['pid', 'name', 'cpu_percent']): process_name = process.info['name']; if process_name != 'Idle': cpu_percent = process.info['cpu_percent']; if cpu_percent > threshold_percentage and process_name not in excluded_processes: print(f'High CPU Usage detected in process: {process_name} ({cpu_percent}%)'); try: os.kill(process.info['pid'], signal.SIGTERM); print(f'Terminated process: {process_name}'); except Exception as e: print(f'Failed to terminate process: {process_name}. Error: {e}'); time.sleep(10)" | python3
